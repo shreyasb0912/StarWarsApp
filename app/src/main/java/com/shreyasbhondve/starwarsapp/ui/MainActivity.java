@@ -2,16 +2,19 @@ package com.shreyasbhondve.starwarsapp.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.shreyasbhondve.starwarsapp.MyApplication;
@@ -33,7 +36,7 @@ import javax.inject.Inject;
 import retrofit2.Callback;
 
 
-public class MainActivity extends AppCompatActivity implements RecyclerViewAdapter.ClickListener {
+public class MainActivity extends AppCompatActivity implements RecyclerViewAdapter.ClickListener, InternetConnectivityReceiver.ConnectivityReceiverListener {
 
     private RecyclerView recyclerView;
     MainActivityComponent mainActivityComponent;
@@ -75,43 +78,77 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
         mainActivityComponent.injectMainActivity(this);
         recyclerView.setAdapter(recyclerViewAdapter);
 
-        if(isNetworkConnected()){
-            progressBar.setVisibility(View.VISIBLE);
-            apiInterface.getCharaters("https://swapi.co/api/people/").enqueue(new Callback<APIResponse>() {
-                @Override
-                public void onResponse(retrofit2.Call<APIResponse> call, retrofit2.Response<APIResponse> response) {
+        // Manually checking internet connection
+        checkConnection();
 
+    }
 
-
-                    List<APIResponse.StarWarCharacter> starWarCharacterList = response.body().results;
-                    populateRecyclerView(starWarCharacterList);
-                }
-
-                @Override
-                public void onFailure(retrofit2.Call<APIResponse> call, Throwable t) {
-                    progressBar.setVisibility(View.GONE);
-                    Log.v("APIResponse",""+t.getMessage());
-                }
-            });
+    // Method to manually check connection status
+    private void checkConnection() {
+        boolean isConnected = InternetConnectivityReceiver.isConnected();
+        showSnack(isConnected);
+        if ((isConnected)) {
+            callAPI();
         }
-        else{
-            progressBar.setVisibility(View.GONE);
-            Toast.makeText(this,"Please check your internet connection",Toast.LENGTH_LONG).show();
+    }
+
+    private void callAPI() {
+
+        progressBar.setVisibility(View.VISIBLE);
+        apiInterface.getCharaters("https://swapi.co/api/people/").enqueue(new Callback<APIResponse>() {
+            @Override
+            public void onResponse(retrofit2.Call<APIResponse> call, retrofit2.Response<APIResponse> response) {
+                progressBar.setVisibility(View.GONE);
+                List<APIResponse.StarWarCharacter> starWarCharacterList = response.body().results;
+                populateRecyclerView(starWarCharacterList);
+            }
+
+            @Override
+            public void onFailure(retrofit2.Call<APIResponse> call, Throwable t) {
+                progressBar.setVisibility(View.GONE);
+                Log.v("APIResponse", "" + t.getMessage());
+            }
+        });
+
+    }
+
+    // Showing the status in Snackbar
+    private void showSnack(boolean isConnected) {
+        String message;
+        int color;
+        if (isConnected) {
+            message = "Good! Connected to Internet";
+            color = Color.WHITE;
+        } else {
+            message = "Sorry! Not connected to internet";
+            color = Color.RED;
         }
 
+        Snackbar snackbar = Snackbar
+                .make(findViewById(R.id.recyclerView), message, Snackbar.LENGTH_LONG);
 
+        View sbView = snackbar.getView();
+        TextView textView = (TextView) sbView.findViewById(android.support.design.R.id.snackbar_text);
+        textView.setTextColor(color);
+        snackbar.show();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // register connection status listener
+        MyApplication.getInstance().setConnectivityListener(this);
     }
 
 
     /**
      * Function to populate the Products data into local database
+     *
      * @param starWarCharacterList
      */
-    private void populateRecyclerView(List<APIResponse.StarWarCharacter> starWarCharacterList){
+    private void populateRecyclerView(List<APIResponse.StarWarCharacter> starWarCharacterList) {
         recyclerViewAdapter.setData(starWarCharacterList);
     }
-
-
 
 
     @Override
@@ -124,15 +161,12 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
                 starWarCharacter.mass,
                 starWarCharacter.created
         );
-        startActivity(new Intent(activityContext, DetailActivity.class).putExtra("data",data));
-    }
-
-    private boolean isNetworkConnected() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        return cm.getActiveNetworkInfo() != null;
+        startActivity(new Intent(activityContext, DetailActivity.class).putExtra("data", data));
     }
 
 
-
+    @Override
+    public void onNetworkConnectionChanged(boolean isConnected) {
+        showSnack(isConnected);
+    }
 }

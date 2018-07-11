@@ -6,6 +6,7 @@ import android.app.Application;
 import com.shreyasbhondve.starwarsapp.di.component.ApplicationComponent;
 import com.shreyasbhondve.starwarsapp.di.component.DaggerApplicationComponent;
 import com.shreyasbhondve.starwarsapp.di.module.ContextModule;
+import com.shreyasbhondve.starwarsapp.ui.InternetConnectivityReceiver;
 
 import javax.inject.Inject;
 
@@ -13,6 +14,7 @@ import javax.inject.Inject;
 public class MyApplication extends Application {
 
     ApplicationComponent applicationComponent;
+    private static MyApplication mInstance;
 
     @Override
     public void onCreate() {
@@ -23,6 +25,7 @@ public class MyApplication extends Application {
 //                .applicationModule(new ApplicationModule(this))
 //                .build();
         applicationComponent.injectApplication(this);
+        mInstance = this;
 
     }
 
@@ -32,6 +35,14 @@ public class MyApplication extends Application {
 
     public ApplicationComponent getApplicationComponent() {
         return applicationComponent;
+    }
+
+    public static synchronized MyApplication getInstance() {
+        return mInstance;
+    }
+
+    public void setConnectivityListener(InternetConnectivityReceiver.ConnectivityReceiverListener listener) {
+        InternetConnectivityReceiver.connectivityReceiverListener = listener;
     }
 }
 
