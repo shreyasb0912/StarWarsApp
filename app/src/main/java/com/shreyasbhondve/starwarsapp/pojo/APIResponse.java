@@ -8,7 +8,7 @@ public class APIResponse {
     @SerializedName("results")
     public List<StarWarCharacter> results = null;
 
-    public class StarWarCharacter{
+    public static class StarWarCharacter{
 
         @SerializedName("name")
         public String name;
@@ -54,6 +54,13 @@ public class APIResponse {
 
         @SerializedName("starships")
         public String[] starships;
+
+        public StarWarCharacter(String name, String height, String mass, String created) {
+            this.name = name;
+            this.height = height;
+            this.mass = mass;
+            this.created = created;
+        }
 
         public String getName() {
             return name;

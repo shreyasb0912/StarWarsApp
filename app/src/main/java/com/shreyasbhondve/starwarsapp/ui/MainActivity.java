@@ -66,7 +66,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
         progressBar = findViewById(R.id.progressBar);
 
         LinearLayoutManager manager = new LinearLayoutManager(this);
-        //GridLayoutManager manager = new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(manager);
 
         ApplicationComponent applicationComponent = MyApplication.get(this).getApplicationComponent();
@@ -87,6 +86,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
     private void checkConnection() {
         boolean isConnected = InternetConnectivityReceiver.isConnected();
         showSnack(isConnected);
+
+        //If internet is present call API to load the data
         if ((isConnected)) {
             callAPI();
         }
@@ -142,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
 
 
     /**
-     * Function to populate the Products data into local database
+     * Function to populate the StarWars characters data into Recyclerview
      *
      * @param starWarCharacterList
      */
@@ -151,10 +152,13 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
     }
 
 
+    /**
+     * Function to call the details activity
+     * @param starWarCharacter
+     */
     @Override
     public void launchIntent(APIResponse.StarWarCharacter starWarCharacter) {
-        //Toast.makeText(mContext, "RecyclerView Row selected", Toast.LENGTH_SHORT).show();
-        //List<ProductCatalog.Category.Product.Variants> variantsList = dataManager.getVariants("1");
+
         Data data = new Data(
                 starWarCharacter.name,
                 starWarCharacter.height,
@@ -165,6 +169,10 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
     }
 
 
+    /**
+     * Callback function called when network state is changed
+     * @param isConnected
+     */
     @Override
     public void onNetworkConnectionChanged(boolean isConnected) {
         showSnack(isConnected);

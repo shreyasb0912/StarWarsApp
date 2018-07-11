@@ -29,6 +29,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         this.starWarCharacterList = new ArrayList<>();
     }
 
+    public RecyclerViewAdapter(List<APIResponse.StarWarCharacter> starWarCharacterList) {
+        this.starWarCharacterList = starWarCharacterList;
+    }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         mContext = parent.getContext();
@@ -46,10 +50,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         return starWarCharacterList.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView txtName;
-        private TextView txtGender;
+        public TextView txtName;
+        public TextView txtGender;
 
         private CardView constraintLayoutContainer;
 

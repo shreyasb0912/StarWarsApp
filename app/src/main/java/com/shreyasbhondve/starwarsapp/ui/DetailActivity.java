@@ -31,11 +31,6 @@ public class DetailActivity extends AppCompatActivity {
     @ApplicationContext
     public Context mContext;
 
-    TextView textView;
-    TextView selectSizeTextView;
-    TextView selectColorTextView;
-    TextView priceTextView;
-    Button addToCartButton;
 
 
     @Override
