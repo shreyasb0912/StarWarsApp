@@ -1,9 +1,10 @@
 package com.shreyasbhondve.starwarsapp.retrofit;
 
-import com.shreyasbhondve.starwarsapp.pojo.Characters;
+import com.shreyasbhondve.starwarsapp.pojo.APIResponse;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Headers;
 import retrofit2.http.Url;
 
 public interface APIInterface {
@@ -15,5 +16,6 @@ public interface APIInterface {
 //    Call<Ranking> getRankings(@Url String url);
 
     @GET
-    Call<Characters> getCharaters(@Url String url);
+    @Headers("Content-Type: application/json")
+    Call<APIResponse> getCharaters(@Url String url);
 }

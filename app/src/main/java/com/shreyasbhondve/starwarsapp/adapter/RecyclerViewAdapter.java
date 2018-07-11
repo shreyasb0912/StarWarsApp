@@ -9,8 +9,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.shreyasbhondve.starwarsapp.R;
-import com.shreyasbhondve.starwarsapp.pojo.Characters;
+import com.shreyasbhondve.starwarsapp.pojo.APIResponse;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -19,13 +20,13 @@ import javax.inject.Inject;
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
 
     private RecyclerViewAdapter.ClickListener clickListener;
-    //List<ProductCatalog.Category.Product> productList = null;
+    List<APIResponse.StarWarCharacter> starWarCharacterList = null;
     Context mContext;
 
     @Inject
     public RecyclerViewAdapter(ClickListener clickListener) {
         this.clickListener = clickListener;
-        //this.productList = new ArrayList<>();
+        this.starWarCharacterList = new ArrayList<>();
     }
 
     @Override
@@ -36,27 +37,26 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-//        holder.txtName.setText(productList.get(position).getName());
-//        String priceRange = "Price: " + mContext.getString(R.string.Rs) + " " + productList.get(position).getMinPrice() + " - " + productList.get(position).getMaxPrice();
-//        holder.txtPrice.setText(priceRange);
+        holder.txtName.setText(starWarCharacterList.get(position).getName());
+
     }
 
     @Override
     public int getItemCount() {
-        return 0/*productList.size()*/;
+        return starWarCharacterList.size();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
         private TextView txtName;
-        private TextView txtPrice;
+
         private CardView constraintLayoutContainer;
 
         ViewHolder(View itemView) {
             super(itemView);
 
             txtName = itemView.findViewById(R.id.txtName);
-            txtPrice = itemView.findViewById(R.id.priceRange);
+
 
             constraintLayoutContainer = itemView.findViewById(R.id.card_view);
 
@@ -73,9 +73,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         void launchIntent();
     }
 
-    public void setData(List<Characters.StarWarCharacter> starWarCharacterList) {
-//        this.productList = new ArrayList<>();
-//        this.productList.addAll(productList);
+    public void setData(List<APIResponse.StarWarCharacter> starWarCharacterList) {
+        this.starWarCharacterList.addAll(starWarCharacterList);
         notifyDataSetChanged();
     }
 }
