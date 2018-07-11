@@ -38,7 +38,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.txtName.setText(starWarCharacterList.get(position).getName());
-
+        holder.txtGender.setText(starWarCharacterList.get(position).getGender());
     }
 
     @Override
@@ -49,6 +49,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     class ViewHolder extends RecyclerView.ViewHolder {
 
         private TextView txtName;
+        private TextView txtGender;
 
         private CardView constraintLayoutContainer;
 
@@ -56,21 +57,21 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             super(itemView);
 
             txtName = itemView.findViewById(R.id.txtName);
-
+            txtGender = itemView.findViewById(R.id.txtGender);
 
             constraintLayoutContainer = itemView.findViewById(R.id.card_view);
 
             constraintLayoutContainer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    clickListener.launchIntent();
+                    clickListener.launchIntent(starWarCharacterList.get(getAdapterPosition()));
                 }
             });
         }
     }
 
     public interface ClickListener {
-        void launchIntent();
+        void launchIntent(APIResponse.StarWarCharacter starWarCharacter);
     }
 
     public void setData(List<APIResponse.StarWarCharacter> starWarCharacterList) {

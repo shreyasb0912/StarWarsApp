@@ -12,8 +12,10 @@ import android.widget.TextView;
 import com.shreyasbhondve.starwarsapp.R;
 import com.shreyasbhondve.starwarsapp.di.component.DetailActivityComponent;
 import com.shreyasbhondve.starwarsapp.di.qualifier.ApplicationContext;
+import com.shreyasbhondve.starwarsapp.pojo.APIResponse;
 import com.shreyasbhondve.starwarsapp.retrofit.APIInterface;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -40,7 +42,12 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
-
+        Bundle data = getIntent().getExtras();
+        Data starWarCharacter = (Data) data.getParcelable("data");
+        ((TextView)findViewById(R.id.name)).setText(starWarCharacter.name);
+        ((TextView)findViewById(R.id.height)).setText(starWarCharacter.height + " meters");
+        ((TextView)findViewById(R.id.mass)).setText(starWarCharacter.mass + " kg");
+        ((TextView)findViewById(R.id.created)).setText(starWarCharacter.created);
 
     }
 

@@ -3,14 +3,13 @@ package com.shreyasbhondve.starwarsapp.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 
 import com.shreyasbhondve.starwarsapp.MyApplication;
@@ -109,9 +108,18 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
 
 
     @Override
-    public void launchIntent() {
+    public void launchIntent(APIResponse.StarWarCharacter starWarCharacter) {
         //Toast.makeText(mContext, "RecyclerView Row selected", Toast.LENGTH_SHORT).show();
         //List<ProductCatalog.Category.Product.Variants> variantsList = dataManager.getVariants("1");
-        startActivity(new Intent(activityContext, DetailActivity.class));
+        Data data = new Data(
+                starWarCharacter.name,
+                starWarCharacter.height,
+                starWarCharacter.mass,
+                starWarCharacter.created
+        );
+        startActivity(new Intent(activityContext, DetailActivity.class).putExtra("data",data));
     }
+
+
+
 }
