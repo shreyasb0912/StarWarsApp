@@ -2,6 +2,7 @@ package com.shreyasbhondve.starwarsapp.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -11,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.shreyasbhondve.starwarsapp.MyApplication;
 import com.shreyasbhondve.starwarsapp.R;
@@ -73,24 +75,29 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
         mainActivityComponent.injectMainActivity(this);
         recyclerView.setAdapter(recyclerViewAdapter);
 
-        progressBar.setVisibility(View.VISIBLE);
-        apiInterface.getCharaters("https://swapi.co/api/people/").enqueue(new Callback<APIResponse>() {
-            @Override
-            public void onResponse(retrofit2.Call<APIResponse> call, retrofit2.Response<APIResponse> response) {
+        if(isNetworkConnected()){
+            progressBar.setVisibility(View.VISIBLE);
+            apiInterface.getCharaters("https://swapi.co/api/people/").enqueue(new Callback<APIResponse>() {
+                @Override
+                public void onResponse(retrofit2.Call<APIResponse> call, retrofit2.Response<APIResponse> response) {
 
-                progressBar.setVisibility(View.GONE);
 
-                List<APIResponse.StarWarCharacter> starWarCharacterList = response.body().results;
-                populateRecyclerView(starWarCharacterList);
-            }
 
-            @Override
-            public void onFailure(retrofit2.Call<APIResponse> call, Throwable t) {
-                progressBar.setVisibility(View.GONE);
-                Log.v("APIResponse",""+t.getMessage());
-            }
-        });
+                    List<APIResponse.StarWarCharacter> starWarCharacterList = response.body().results;
+                    populateRecyclerView(starWarCharacterList);
+                }
 
+                @Override
+                public void onFailure(retrofit2.Call<APIResponse> call, Throwable t) {
+                    progressBar.setVisibility(View.GONE);
+                    Log.v("APIResponse",""+t.getMessage());
+                }
+            });
+        }
+        else{
+            progressBar.setVisibility(View.GONE);
+            Toast.makeText(this,"Please check your internet connection",Toast.LENGTH_LONG).show();
+        }
 
 
     }
@@ -118,6 +125,12 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
                 starWarCharacter.created
         );
         startActivity(new Intent(activityContext, DetailActivity.class).putExtra("data",data));
+    }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        return cm.getActiveNetworkInfo() != null;
     }
 
 
